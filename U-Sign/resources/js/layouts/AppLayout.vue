@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/app/AppSidebarLayout.vue';
-import type { BreadcrumbItemType } from '@/types';
-
-interface Props {
-    breadcrumbs?: BreadcrumbItemType[];
-}
-
-withDefaults(defineProps<Props>(), {
-    breadcrumbs: () => [],
-});
+import Navbar from "@/components/U-Sign Components/Navbar.vue";
+import Footer from "@/components/U-Sign Components/Footer.vue";
 </script>
 
 <template>
-    <AppLayout :breadcrumbs="breadcrumbs">
+    <nav class="sticky top-0 z-50 w-full border-b border-gray-200 bg-white">
+        <Navbar />
+    </nav>
+
+    <main class="">
         <slot />
-    </AppLayout>
+    </main>
+
+    <Footer />
 </template>
