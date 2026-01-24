@@ -56,7 +56,10 @@ defineOptions({
                 </h1>
 
                 <p class="">
-                    I provide fast, cost-effective translation for university frontline services. Use me on websites, service portals, or kiosks to deliver accessible, barrier-free information. I help ensure Deaf students, staff, and visitors receive clear communication, while also supporting inclusive access for hearing users.
+                    I provide fast, cost-effective translation for university frontline services.
+                    Use me on websites, service portals, or kiosks to deliver accessible, barrier-free information.
+                    I help ensure Deaf students, staff, and visitors receive clear communication,
+                    while also supporting inclusive access for hearing users.
                 </p>
 
                 <Link href="/tutorial" class="underline">
@@ -104,7 +107,10 @@ defineOptions({
                 </h1>
 
                 <p class="text-red-700">
-                    I provide fast, cost-effective translation for university frontline services. Use me on websites, service portals, or kiosks to deliver accessible, barrier-free information. I help ensure Deaf students, staff, and visitors receive clear communication, while also supporting inclusive access for hearing users.
+                    I provide fast, cost-effective translation for university frontline services. Use me on websites,
+                    service portals, or kiosks to deliver accessible, barrier-free information.
+                    I help ensure Deaf students, staff, and visitors receive clear communication,
+                    while also supporting inclusive access for hearing users.
                 </p>
 
                 <Link href="/tutorial" class="underline text-red-700">

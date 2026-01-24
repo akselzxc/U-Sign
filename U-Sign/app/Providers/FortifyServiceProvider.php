@@ -13,6 +13,8 @@ use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
 
+use Illuminate\Support\Facades\Log;
+
 class FortifyServiceProvider extends ServiceProvider
 {
     /**
@@ -31,7 +33,51 @@ class FortifyServiceProvider extends ServiceProvider
         $this->configureActions();
         $this->configureViews();
         $this->configureRateLimiting();
+        $this->booteds();
+
+
     }
+    private function booteds(): void {
+        Fortify::createUsersUsing(CreateNewUser::class);
+        Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
+        Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
+        Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
+
+        RateLimiter::for('login', function (Request $request) {
+            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
+            return Limit::perMinute(5)->by($throttleKey);
+        });
+
+        RateLimiter::for('two-factor', function (Request $request) {
+            return Limit::perMinute(5)->by($request->session()->get('login.id'));
+        });
+
+        // Custom login redirect based on role
+        Fortify::redirects('login', function (Request $request) {
+            $user = $request->user();
+
+            Log::info('=== LOGIN REDIRECT ===');
+            Log::info('User: ' . $user->email);
+            Log::info('Role: ' . $user->role);
+
+            if ($user->role === 'frontline') {
+                Log::info('Going to: /Fr_dashboard');
+                return '/Fr_dashboard';
+            }
+
+            Log::info('Going to: /home (default)');
+            return '/home';
+        });
+//     Fortify::redirects('login', function (Request $request) {
+//     // Check user role and redirect accordingly
+//     if ($request->user()->role === 'frontline') {
+//        return '/Fr_dashboard';  // Your frontline dashboard route
+//     }
+//
+//     return '/Fr_dashboard';  // Default redirect
+//     });
+    }
+
 
     /**
      * Configure Fortify actions.

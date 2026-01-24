@@ -8,7 +8,9 @@ import {Link} from "@inertiajs/vue3";
 
         <!-- Logo -->
         <div class="flex items-center gap-2">
+            <Link href="/login_frontline">
             <img src="/Images/USignLogo.png" alt="U'Sign Logo" class="h-15 w-auto" />
+            </Link>
         </div>
 
         <!-- Menu -->

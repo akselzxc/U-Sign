@@ -2,7 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import Navbar from "@/components/U-Sign Components/Navbar.vue";
 import Footer from "@/components/U-Sign Components/Footer.vue";
-import { dashboard, login, register } from '@/routes';
+//import { dashboard, login, register } from '@/routes';
 import {CardFooter} from "@/components/ui/card";
 import {Collapsible} from "@/components/ui/collapsible";
 

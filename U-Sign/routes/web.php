@@ -28,8 +28,13 @@ Route::get('/guestInput', [App\Http\Controllers\NavbarController::class, 'guestI
 Route::get('/queries', [App\Http\Controllers\NavbarController::class, 'queries'])->name('queries');
 Route::get('/deafUI', [App\Http\Controllers\NavbarController::class, 'deafUI'])->name('deafUI');
 
+//Frontline Login interface
+Route::get('/login_frontline', [App\Http\Controllers\NavbarController::class, 'login_frontline'])->name('login_frontline');
 
-
+//Frontlin Sidebarr
+Route::get('/Fr_dashboard', [App\Http\Controllers\Fr_SidebarController::class, 'Fr_dashboard'])->name('Fr_dashboard');
+Route::get('/fr_messages', [App\Http\Controllers\Fr_SidebarController::class, 'fr_messages'])->name('fr.messages');
+Route::get('/fr_logs', [App\Http\Controllers\Fr_SidebarController::class, 'fr_logs'])->name('fr.logs');
 //Route::get('/tutorial', function () {
 //    return Inertia::render('Frontend/Tutorial');
 //})->name('tutorial');

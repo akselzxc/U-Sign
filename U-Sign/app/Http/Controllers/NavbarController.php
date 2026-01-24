@@ -64,4 +64,10 @@ class NavbarController extends Controller
         return Inertia::render('Frontend/DeafUI');
     }
 
+    public function login_frontline()
+    {
+        return Inertia::render('Frontend/Login_Frontline');
+    }
+
+
 }
