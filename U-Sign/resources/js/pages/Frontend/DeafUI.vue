@@ -2,7 +2,8 @@
 import AppLayout from "@/layouts/AppLayout.vue";
 import { Link } from "@inertiajs/vue3";
 import Login from "@/pages/auth/Login.vue";
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue';
+import Messages from '@/components/Messages.vue';
 
 const camera = ref<HTMLVideoElement | null>(null)
 
@@ -73,44 +74,9 @@ onMounted(async () => {
             </div>
 
             <!-- RIGHT -->
-            <div class="bg-[#EDEDED] rounded-xl p-6 flex flex-col justify-between">
+            <div>
 
-                <!-- Title -->
-                <h2 class="text-xl font-semibold text-center mb-4 text-black">
-                    Conversation
-                </h2>
-
-                <!-- Messages -->
-                <div class="flex flex-col gap-3 flex-1">
-                    <!-- User -->
-                    <div class="self-end bg-red-700 text-white px-4 py-2 rounded-full max-w-xs">
-                        Hello, can I get my COR?
-                    </div>
-
-                    <!-- Bot -->
-                    <div class="flex items-center gap-2">
-                        <img src="Images/Avatar.png" class="w-8 h-8 rounded-full" />
-                        <div class="bg-gray-500 text-white px-4 py-2 rounded-full max-w-xs">
-                            Yes, you can
-                        </div>
-                    </div>
-                </div>
-
-
-                <!-- Done -->
-                <Link href="/home" class="mt-4 self-center bg-red-700 text-white px-6 py-2 rounded-lg">
-                    Done
-                </Link>
-                <!-- Input -->
-                <div class="mt-4 flex items-center gap-2 bg-[#D9D9D9] py-2 px-4 rounded-2xl">
-                    <input
-                        type="text"
-                        placeholder="Enter text..."
-                        class="flex-1 px-4 py-2 rounded-full outline-none  text-black"
-                    />
-                    <img src="Images/Send.png" class="w-8 h-8 rounded-full" />
-                </div>
-
+                <Messages />
 
             </div>
 
