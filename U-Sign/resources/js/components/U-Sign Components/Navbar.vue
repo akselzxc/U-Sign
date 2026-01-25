@@ -1,6 +1,15 @@
 <script setup lang="ts">
 
 import {Link} from "@inertiajs/vue3";
+import { computed } from 'vue';
+
+const props = defineProps<{
+  currentRoute?: string;
+}>();
+
+const isActive = (route: string) => {
+  return props.currentRoute === route;
+};
 </script>
 
 <template>
@@ -15,16 +24,40 @@ import {Link} from "@inertiajs/vue3";
 
         <!-- Menu -->
         <div class="flex items-center gap-8">
-            <Link href="/home" class="text-sm font-medium text-gray-600 hover:text-gray-900">
+            <Link 
+                href="/home" 
+                class="text-sm font-medium transition-colors duration-300 relative"
+                :class="isActive('/home') ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900'"
+            >
                 Home
+                <span 
+                    v-if="isActive('/home')"
+                    class="absolute -bottom-1 left-0 w-full h-0.5 bg-red-700"
+                ></span>
             </Link>
 
-            <Link href="/tutorial" class="text-sm font-medium text-gray-600 hover:text-gray-900">
+            <Link 
+                href="/tutorial" 
+                class="text-sm font-medium transition-colors duration-300 relative"
+                :class="isActive('/tutorial') ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900'"
+            >
                 Tutorial
+                <span 
+                    v-if="isActive('/tutorial')"
+                    class="absolute -bottom-1 left-0 w-full h-0.5 bg-red-700"
+                ></span>
             </Link>
 
-            <Link href="/faqs" class="text-sm font-medium text-gray-600 hover:text-gray-900">
+            <Link 
+                href="/faqs" 
+                class="text-sm font-medium transition-colors duration-300 relative"
+                :class="isActive('/faqs') ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900'"
+            >
                 FAQs
+                <span 
+                    v-if="isActive('/faqs')"
+                    class="absolute -bottom-1 left-0 w-full h-0.5 bg-red-700"
+                ></span>
             </Link>
 
             <Link class="

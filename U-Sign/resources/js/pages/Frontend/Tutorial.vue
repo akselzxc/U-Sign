@@ -23,7 +23,7 @@ defineOptions({
             <div class="flex lg:flex-col gap-6">
                 <h1 class="
                         text-center
-                        font-bold
+                        font-michroma
                         text-red-700
                         text-2xl
                         sm:text-6xl
@@ -54,7 +54,7 @@ defineOptions({
             <div class="flex lg:flex-col gap-6">
                 <h1 class="
                         text-center
-                        font-bold
+                        font-michroma
                         text-white
                         text-2xl
                         sm:text-6xl
@@ -94,7 +94,7 @@ defineOptions({
             <div class="flex lg:flex-col gap-6">
                 <h1 class="
                         text-center
-                        font-bold
+                        font-michroma
                         text-red-700
                         text-2xl
                         sm:text-6xl
@@ -134,7 +134,7 @@ defineOptions({
             <div class="flex lg:flex-col gap-6">
                 <h1 class="
                         text-center
-                        font-bold
+                        font-michroma
                         text-white
                         text-2xl
                         sm:text-6xl
@@ -172,7 +172,7 @@ defineOptions({
             <div class="flex lg:flex-col gap-6">
                 <h1 class="
                         text-center
-                        font-bold
+                        font-michroma
                         text-red-700
                         text-2xl
                         sm:text-6xl
@@ -207,7 +207,7 @@ defineOptions({
             <div class="flex lg:flex-col gap-6">
                 <h1 class="
                         text-center
-                        font-bold
+                        font-michroma
                         text-white
                         text-2xl
                         sm:text-6xl

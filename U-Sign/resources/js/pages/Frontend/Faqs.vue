@@ -22,13 +22,12 @@ defineOptions({
             <div class="flex lg:flex-col gap-6">
                 <h1 class="
                         text-center
-                        font-bold
+                        font-michroma
                         text-red-700
                         text-2xl
                         sm:text-6xl
                         md:text-7xl
                         lg:text-8xl
-                        lg:text-left
                       ">
                     Frequently <br/>
                     Asked <br/>
@@ -53,13 +52,12 @@ defineOptions({
         <div class="flex lg:flex-col gap-6 lg:text-center items-center">
             <h1 class="
                         text-center
-                        font-bold
+                        font-michroma
                         text-white
                         text-2xl
-                        sm:text-6xl
-                        md:text-7xl
-                        lg:text-6xl
-                        lg:text-left
+                        sm:text-5xl
+                        md:text-6xl
+                        lg:text-5xl
                       ">
                 Frequently Asked Questions (FAQs)
             </h1>

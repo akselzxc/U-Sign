@@ -22,7 +22,7 @@ defineOptions({
 
             <h1 class="
                         text-center
-                        font-medium
+                        font-michroma
                         text-red-700
                         text-5xl
                         sm:text-6xl
@@ -42,7 +42,7 @@ defineOptions({
             <div class="flex lg:flex-col gap-6">
                 <h1 class="
                         text-center
-                        font-bold
+                        font-michroma
                         text-white
                         text-2xl
                         sm:text-6xl
@@ -50,9 +50,9 @@ defineOptions({
                         lg:text-4xl
                         lg:text-left
                       ">
-                    U'Sign translate text into sign
-                    language and sign language
-                    into audio and text
+                    U'Sign Translate Text into Sign
+                    Language and Sign Language
+                    into Audio and Text
                 </h1>
 
                 <p class="">
@@ -95,7 +95,7 @@ defineOptions({
             <div class="flex lg:flex-col gap-6">
                 <h1 class="
                         text-center
-                        font-bold
+                        font-michroma
                         text-red-700
                         text-2xl
                         sm:text-6xl
@@ -103,7 +103,7 @@ defineOptions({
                         lg:text-4xl
                         lg:text-left
                       ">
-                    I translate your world
+                    I Translate Your World
                 </h1>
 
                 <p class="text-red-700">
