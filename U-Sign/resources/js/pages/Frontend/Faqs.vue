@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Head } from '@inertiajs/vue3';
 import AppLayout from "@/layouts/AppLayout.vue";
 import { Link } from "@inertiajs/vue3";
 import { ref } from 'vue'
@@ -16,6 +17,7 @@ defineOptions({
 </script>
 
 <template>
+    <Head title="FAQs" />
     <section class="flex items-center justify-center bg-white px-6 -mt-15">
         <div class="flex w-full max-w-6xl flex-col items-center lg:flex-row lg:items-center lg:justify-start lg:gap-35">
             <!-- Avatar -->
