@@ -13,86 +13,70 @@ export default {
             isLoading: false,
             errorMessage: '',
             showLogin: false,
-            countdown: 2,
+            countdown: 1,
             showPassword: false
         }
     },
-    mounted() {
+        mounted() {
         const interval = setInterval(() => {
             this.countdown--;
             if (this.countdown <= 0) {
                 this.showLogin = true;
                 clearInterval(interval);
             }
-        }, 1000);
-    },
+        }, 500);
+
+        // Ensure CSRF token is set
+        const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        if (token) {
+            // Ensure defaults object exists before setting headers
+            if (!this.$inertia.defaults) {
+                this.$inertia.defaults = {};
+            }
+            this.$inertia.defaults.headers = {
+                ...this.$inertia.defaults.headers, // Preserve existing headers if any
+                'X-CSRF-TOKEN': token
+            };
+        }
+    }
+,
     methods: {
         togglePasswordVisibility() {
             this.showPassword = !this.showPassword;
         },
         handleLogin() {
-            this.errorMessage = '';
+    this.errorMessage = '';
 
-            if (!this.form.email || !this.form.password) {
-                this.errorMessage = 'Please fill in all fields';
-                return;
-            }
+    if (!this.form.email || !this.form.password) {
+        this.errorMessage = 'Please fill in all fields';
+        return;
+    }
 
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(this.form.email)) {
-                this.errorMessage = 'Please enter a valid email address';
-                return;
-            }
-            router.post('/login', this.form, {
-                onSuccess: (page) => {
-                    console.log('Login successful!', page);
-                    console.log('Current URL:', window.location.href);
-                    console.log('Page component:', page.component);
-                },
-                onError: (errors) => {
-                    console.log('Login errors:', errors);
-                    this.errorMessage = errors.email || errors.password || 'Invalid email or password';
-                    this.isLoading = false;
-                },
-                onFinish: () => {
-                    this.isLoading = false;
-                }
-            });
-
-
-
-            //     try {
-            //         const response = await axios.post('/login', {
-            //             email: this.email,
-            //             password: this.password
-            //         });
-            //
-            //         if (response.data.success) {
-            //             // Note: localStorage usage - in production, consider using httpOnly cookies
-            //             localStorage.setItem('auth_token', response.data.token);
-            //             localStorage.setItem('user', JSON.stringify(response.data.user));
-            //             window.location.href = '/dashboard';
-            //         }
-            //     } catch (error) {
-            //         if (error.response) {
-            //             if (error.response.status === 401) {
-            //                 this.errorMessage = 'Invalid email or password';
-            //             } else if (error.response.status === 422) {
-            //                 this.errorMessage = error.response.data.message || 'Validation error';
-            //             } else {
-            //                 this.errorMessage = 'An error occurred. Please try again.';
-            //             }
-            //         } else if (error.request) {
-            //             this.errorMessage = 'Network error. Please check your connection.';
-            //         } else {
-            //             this.errorMessage = 'An unexpected error occurred.';
-            //         }
-            //         console.error('Login error:', error);
-            //     } finally {
-            //         this.isLoading = false;
-            //     }
-            // }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.form.email)) {
+        this.errorMessage = 'Please enter a valid email address';
+        return;
+    }
+    
+    this.isLoading = true;
+    
+    router.post('/login', this.form, {
+        preserveState: true,
+        preserveScroll: true,
+        onSuccess: (page) => {
+            console.log('Login successful!', page);
+            router.visit('/Fr_dashboard');
+        },
+        onError: (errors) => {
+            console.log('Login errors:', errors);
+            this.errorMessage = errors.email || errors.password || 'Invalid email or password';
+            this.isLoading = false;
+        },
+        onFinish: () => {
+            this.isLoading = false;
         }
+    });
+}
     }
 }
 
@@ -103,7 +87,7 @@ export default {
         <!-- Fullscreen Red Panel with Countdown Animation -->
         <div
             :class="[
-                'fixed inset-0 bg-gradient-to-br from-[#FF0202] via-[#CA0202] to-[#990101] flex items-center justify-center transition-all duration-700 ease-in-out z-50',
+                'fixed inset-0 bg-gradient-to-br from-[#FF0202] via-[#CA0202] to-[#990101] flex items-center justify-center transition-all duration-300 ease-in-out z-50',
                 showLogin ? 'translate-x-0 w-1/2' : 'translate-x-0 w-full'
             ]"
         >
@@ -140,7 +124,7 @@ export default {
         <!-- Login Form Panel (slides in from right) -->
         <div
             :class="[
-                'fixed right-0 top-0 h-full w-1/2 bg-white flex items-center justify-center transition-all duration-700 ease-in-out',
+                'fixed right-0 top-0 h-full w-1/2 bg-white flex items-center justify-center transition-all duration-300 ease-in-out',
                 showLogin ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
             ]"
         >
@@ -148,7 +132,7 @@ export default {
                 <!-- Logo -->
                 <div class="text-center -mt-12" >
                     <div class="inline-flex items-center justify-center">
-                        <img src="/pictures/logo-removebg-preview.png"
+                        <img src="/Images/USignLogo.png"
                              alt="U-Sign Logo"
                              class="h-80 w-auto" />
                     </div>
@@ -235,8 +219,7 @@ export default {
                         <span v-else class="flex items-center justify-center">
                             <svg class="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0
-                                  12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
                             Logging in...
                         </span>

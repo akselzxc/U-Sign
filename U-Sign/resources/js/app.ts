@@ -6,6 +6,20 @@ import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 
 import { initializeTheme } from './composables/useAppearance';
+import axios from 'axios';
+
+// Set Axios to include the CSRF token in all requests
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+// Get the meta element
+const token = document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null;
+
+if (token && token.content) {
+    axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+} else {
+    console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
+}
+
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
