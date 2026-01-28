@@ -1,240 +1,185 @@
-<script setup lang="ts">
-import { ref, computed } from 'vue';
+<script setup>
 import Fr_sidebar from '@/components/U-Sign Components/Fr_sidebar.vue';
+import { usePage, Head } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
 
-// Sample log data - expanded with more entries
+const { auth } = usePage().props;
+const user = auth.user;
+
+// Mock Data for Logs (Replace this with props from your Laravel controller)
 const logs = ref([
-    { id: 1, datetime: '2026-01-25 10:30 AM', user: 'Juan Dela Cruz', action: 'Requested COR for 1st Semester', role: 'Student' },
-    { id: 2, datetime: '2026-01-25 10:32 AM', user: 'Maria Santos', action: 'Approved COR Request #12345', role: 'Frontliner' },
-    { id: 3, datetime: '2026-01-25 10:35 AM', user: 'Pedro Garcia', action: 'Downloaded COR Document', role: 'Student' },
-    { id: 4, datetime: '2026-01-25 10:40 AM', user: 'Ana Reyes', action: 'Updated Profile Information', role: 'Student' },
-    { id: 5, datetime: '2026-01-25 10:45 AM', user: 'Jose Mendoza', action: 'Responded to Student Query', role: 'Frontliner' },
-    { id: 6, datetime: '2026-01-25 10:50 AM', user: 'Lisa Cruz', action: 'Submitted Grade Report', role: 'Student' },
-    { id: 7, datetime: '2026-01-25 11:00 AM', user: 'Mark Torres', action: 'Verified Student Document', role: 'Frontliner' },
-    { id: 8, datetime: '2026-01-25 11:15 AM', user: 'Sarah Lee', action: 'Requested Official Transcript', role: 'Student' },
-    { id: 9, datetime: '2026-01-25 11:20 AM', user: 'Carlos Ramos', action: 'Logged into System', role: 'Student' },
-    { id: 10, datetime: '2026-01-25 11:25 AM', user: 'Diana Flores', action: 'Processed COR Request', role: 'Frontliner' },
-    { id: 11, datetime: '2026-01-25 11:30 AM', user: 'Rico Tan', action: 'Updated Contact Number', role: 'Student' },
-    { id: 12, datetime: '2026-01-25 11:35 AM', user: 'Emma Garcia', action: 'Sent Email Notification', role: 'Frontliner' },
-    { id: 13, datetime: '2026-01-25 11:40 AM', user: 'John Santos', action: 'Viewed Academic Records', role: 'Student' },
-    { id: 14, datetime: '2026-01-25 11:45 AM', user: 'Grace Lim', action: 'Approved Document Request', role: 'Frontliner' },
-    { id: 15, datetime: '2026-01-25 11:50 AM', user: 'Ryan Cruz', action: 'Requested Certificate of Grades', role: 'Student' },
+    { id: 1, user: 'John Doe', role: 'Student', action: 'Log in', description: 'User logged in successfully', status: 'success', created_at: '2023-10-27 08:30:00' },
+    { id: 2, user: 'Jane Smith', role: 'Frontliner', action: 'Log in', description: 'User logged in successfully', status: 'success', created_at: '2023-10-27 09:15:00' },
+    { id: 3, user: 'Mike Johnson', role: 'Admin', action: 'Log out', description: 'User logged out', status: 'success', created_at: '2023-10-27 10:00:00' },
+    { id: 4, user: 'Sarah Williams', role: 'Student', action: 'Log in', description: 'Failed login attempt', status: 'error', created_at: '2023-10-27 10:45:00' },
+    { id: 5, user: 'John Doe', role: 'Student', action: 'Log out', description: 'User logged out', status: 'success', created_at: '2023-10-27 11:30:00' },
+    { id: 6, user: 'Alice Brown', role: 'Frontliner', action: 'Log in', description: 'User logged in successfully', status: 'success', created_at: '2023-10-27 12:00:00' },
+    { id: 7, user: 'Bob White', role: 'Student', action: 'Log out', description: 'User logged out', status: 'success', created_at: '2023-10-27 12:30:00' },
 ]);
 
-const selectedFilter = ref<string>('All');
-const searchQuery = ref<string>('');
-const currentPage = ref<number>(1);
-const itemsPerPage = 10;
+const search = ref('');
+const filterRole = ref('');
 
-// Filter logs based on role and search
 const filteredLogs = computed(() => {
-    let result = logs.value;
-
-    // Filter by role
-    if (selectedFilter.value !== 'All') {
-        result = result.filter(log => log.role === selectedFilter.value);
-    }
-
-    // Filter by search query
-    if (searchQuery.value.trim()) {
-        const query = searchQuery.value.toLowerCase();
-        result = result.filter(log =>
-            log.user.toLowerCase().includes(query) ||
-            log.action.toLowerCase().includes(query) ||
-            log.datetime.toLowerCase().includes(query)
-        );
-    }
-
-    return result;
+    return logs.value.filter(log => {
+        const matchesSearch = log.user.toLowerCase().includes(search.value.toLowerCase()) ||
+                              log.action.toLowerCase().includes(search.value.toLowerCase()) ||
+                              log.description.toLowerCase().includes(search.value.toLowerCase());
+        const matchesRole = filterRole.value ? log.role === filterRole.value : true;
+        return matchesSearch && matchesRole;
+    });
 });
 
-// Paginated logs
+const currentPage = ref(1);
+const itemsPerPage = 5;
+
+const totalPages = computed(() => Math.ceil(filteredLogs.value.length / itemsPerPage));
+
 const paginatedLogs = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     return filteredLogs.value.slice(start, end);
 });
 
-// Total pages
-const totalPages = computed(() => {
-    return Math.ceil(filteredLogs.value.length / itemsPerPage);
-});
-
-// Reset to page 1 when filter changes
-const setFilter = (filter: string) => {
-    selectedFilter.value = filter;
-    currentPage.value = 1;
+const nextPage = () => {
+    if (currentPage.value < totalPages.value) currentPage.value++;
 };
 
-// Go to specific page
-const goToPage = (page: number) => {
-    if (page >= 1 && page <= totalPages.value) {
-        currentPage.value = page;
-    }
+const prevPage = () => {
+    if (currentPage.value > 1) currentPage.value--;
 };
 
-// Get page numbers to display
-const visiblePages = computed(() => {
-    const pages: number[] = [];
-    const total = totalPages.value;
-    const current = currentPage.value;
-
-    if (total <= 5) {
-        for (let i = 1; i <= total; i++) {
-            pages.push(i);
-        }
-    } else {
-        if (current <= 3) {
-            pages.push(1, 2, 3, 4, 5);
-        } else if (current >= total - 2) {
-            pages.push(total - 4, total - 3, total - 2, total - 1, total);
-        } else {
-            pages.push(current - 2, current - 1, current, current + 1, current + 2);
-        }
+const getStatusColor = (status) => {
+    switch (status) {
+        case 'success': return 'bg-green-100 text-green-800 border-green-200';
+        case 'warning': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        case 'error': return 'bg-red-100 text-red-800 border-red-200';
+        default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
-
-    return pages;
-});
+};
 </script>
 
 <template>
-    <div class="min-h-screen bg-gray-100 flex">
+    <Head title="Activity Logs" />
+    <div class="min-h-screen bg-gray-50">
         <!-- Sidebar -->
-        <Fr_sidebar />
+        <Fr_sidebar :user="user" />
 
         <!-- Main Content -->
-        <div class="flex-1 p-6 ml-64">
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <!-- Header -->
-                <div class="mb-6">
-                    <h1 class="text-2xl font-bold text-gray-800 mb-2">Activity Logs</h1>
-                    <p class="text-gray-600">View all system activities and user actions</p>
+        <main class="ml-64 p-8">
+            <header class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Activity Logs</h1>
+                    <p class="text-gray-500 mt-1">Monitor system activities and user actions.</p>
                 </div>
+                <!-- Actions -->
+                <div class="flex gap-3">
+                    <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition shadow-sm flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        Export CSV
+                    </button>
+                </div>
+            </header>
 
-                <!-- Filters and Search -->
-                <div class="flex flex-col md:flex-row gap-4 mb-6 items-center">
-                    <!-- Search Bar -->
-                    <div class="w-full md:w-96">
+            <!-- Filters -->
+            <div class="bg-white rounded-xl shadow-sm p-4 mb-6 border border-gray-100">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1 relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </span>
                         <input
-                            v-model="searchQuery"
+                            v-model="search"
                             type="text"
-                            placeholder="Search by user, action, or date..."
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-700 text-gray-800 placeholder-gray-400 bg-white"
+                            placeholder="Search by user, action, or description..."
+                            class="w-full pl-10 pr-4 py-2 border border-gray-300 text-gray-700 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition outline-none"
                         />
                     </div>
-
-                    <!-- Spacer to push filters to the right -->
-                    <div class="flex-1"></div>
-
-                    <!-- Role Filter -->
-                    <div class="flex gap-2">
-                        <button
-                            @click="setFilter('All')"
-                            :class="selectedFilter === 'All' ? 'bg-red-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
-                            class="px-4 py-2 rounded-lg font-semibold transition"
-                        >
-                            All
-                        </button>
-                        <button
-                            @click="setFilter('Student')"
-                            :class="selectedFilter === 'Student' ? 'bg-red-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
-                            class="px-4 py-2 rounded-lg font-semibold transition"
-                        >
-                            Student
-                        </button>
-                        <button
-                            @click="setFilter('Frontliner')"
-                            :class="selectedFilter === 'Frontliner' ? 'bg-red-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
-                            class="px-4 py-2 rounded-lg font-semibold transition"
-                        >
-                            Frontliner
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Table -->
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead>
-                        <tr class="bg-gray-100 border-b border-gray-200">
-                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Date/Time</th>
-                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">User</th>
-                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Action</th>
-                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Role</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr
-                            v-for="log in paginatedLogs"
-                            :key="log.id"
-                            class="border-b border-gray-200 hover:bg-gray-50 transition"
-                        >
-                            <td class="px-6 py-4 text-sm text-gray-800">{{ log.datetime }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-800">{{ log.user }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-800">{{ log.action }}</td>
-                            <td class="px-6 py-4">
-                                    <span
-                                        :class="log.role === 'Student' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'"
-                                        class="px-3 py-1 rounded-full text-xs font-semibold"
-                                    >
-                                        {{ log.role }}
-                                    </span>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                    <!-- No Results -->
-                    <div v-if="paginatedLogs.length === 0" class="text-center py-12">
-                        <p class="text-gray-500 text-lg">No logs found</p>
-                    </div>
-                </div>
-
-                <!-- Pagination Footer -->
-                <div class="mt-6 flex items-center justify-between">
-                    <!-- Results Count -->
-                    <div class="text-sm text-gray-600">
-                        Showing {{ ((currentPage - 1) * itemsPerPage) + 1 }} to {{ Math.min(currentPage * itemsPerPage, filteredLogs.length) }} of {{ filteredLogs.length }} logs
-                    </div>
-
-                    <!-- Pagination Controls -->
-                    <div class="flex items-center gap-2" v-if="totalPages > 1">
-                        <!-- Previous Button -->
-                        <button
-                            @click="goToPage(currentPage - 1)"
-                            :disabled="currentPage === 1"
-                            :class="currentPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-100'"
-                            class="px-4 py-2 border border-gray-300 rounded text-sm font-medium transition"
-                        >
-                            Previous
-                        </button>
-
-                        <!-- Page Numbers -->
-                        <button
-                            v-for="page in visiblePages"
-                            :key="page"
-                            @click="goToPage(page)"
-                            :class="page === currentPage ? 'bg-red-700 text-white border-red-700' : 'bg-white text-gray-700 hover:bg-gray-100'"
-                            class="px-4 py-2 border border-gray-300 rounded text-sm font-medium transition"
-                        >
-                            {{ page }}
-                        </button>
-
-                        <!-- Next Button -->
-                        <button
-                            @click="goToPage(currentPage + 1)"
-                            :disabled="currentPage === totalPages"
-                            :class="currentPage === totalPages ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-100'"
-                            class="px-4 py-2 border border-gray-300 rounded text-sm font-medium transition"
-                        >
-                            Next
-                        </button>
+                    <div class="w-full md:w-48">
+                        <select v-model="filterRole" class="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition bg-white outline-none">
+                            <option value="">All Roles</option>
+                            <option value="Student">Student</option>
+                            <option value="Frontliner">Frontliner</option>
+                        </select>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <!-- Logs Table -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-200 text-xs uppercase text-gray-500 font-semibold tracking-wider">
+                                <th class="px-6 py-4">Timestamp</th>
+                                <th class="px-6 py-4">User</th>
+                                <th class="px-6 py-4">Role</th>
+                                <th class="px-6 py-4">Action</th>
+                                <th class="px-6 py-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr v-for="log in paginatedLogs" :key="log.id" class="hover:bg-gray-50 transition duration-150">
+                                <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{{ log.created_at }}</td>
+                                <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ log.user }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-600">
+                                    <span class="px-2 py-1 bg-gray-100 rounded text-xs font-medium text-gray-600 border border-gray-200">{{ log.role }}</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-900 font-medium">{{ log.action }}</div>
+                                    <div class="text-xs text-gray-500">{{ log.description }}</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span :class="['px-3 py-1 rounded-full text-xs font-medium border', getStatusColor(log.status)]">
+                                        {{ log.status.toUpperCase() }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr v-if="filteredLogs.length === 0">
+                                <td colspan="5" class="px-6 py-10 text-center text-gray-500">No logs found matching your criteria.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- Pagination -->
+                    <div v-if="filteredLogs.length > 0" class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+                        <div class="flex flex-1 justify-between sm:hidden">
+                            <button @click="prevPage" :disabled="currentPage === 1" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">Previous</button>
+                            <button @click="nextPage" :disabled="currentPage === totalPages" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">Next</button>
+                        </div>
+                        <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                            <div>
+                                <p class="text-sm text-gray-700">
+                                    Showing
+                                    <span class="font-medium">{{ (currentPage - 1) * itemsPerPage + 1 }}</span>
+                                    to
+                                    <span class="font-medium">{{ Math.min(currentPage * itemsPerPage, filteredLogs.length) }}</span>
+                                    of
+                                    <span class="font-medium">{{ filteredLogs.length }}</span>
+                                    results
+                                </p>
+                            </div>
+                            <div>
+                                <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                                    <button @click="prevPage" :disabled="currentPage === 1" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50">
+                                        <span class="sr-only">Previous</span>
+                                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                    <button @click="nextPage" :disabled="currentPage === totalPages" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50">
+                                        <span class="sr-only">Next</span>
+                                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 </template>
-
-<style scoped>
-</style>

@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import AppLayout from "@/layouts/AppLayout.vue";
-import { Link } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
 import Login from "@/pages/auth/Login.vue";
 import { ref } from 'vue';
 
 import Fr_sidebar from '@/components/U-Sign Components/Fr_sidebar.vue';
+
+const { auth } = usePage().props;
+const user = auth.user;
 
 // Control sidebar visibility
 const showSidebar = ref(true);
@@ -17,7 +20,7 @@ const toggleSidebar = () => {
 <template>
     <div class="min-h-screen bg-gray-100 flex">
         <!-- Sidebar -->
-        <Fr_sidebar />
+        <Fr_sidebar :user="user" />
 
         <!-- Main Content -->
         <div class="flex-1 p-6 ml-64">
@@ -39,7 +42,7 @@ const toggleSidebar = () => {
                             <div
                                 class="absolute bottom-4 bg-gray-700/60 text-white px-4 py-2 rounded-lg z-10 -mb-15"
                             >
-                                Hiii, Can i Get my COR on 1st Semester.
+                                Hi, can i get my COR.
                             </div>
                         </div>
                     </div>
@@ -78,7 +81,7 @@ const toggleSidebar = () => {
                         <div class="flex items-start gap-2">
                             <img src="Images/Avatar.png" class="w-8 h-8 rounded-full flex-shrink-0" />
                             <div class="bg-red-700 text-white px-4 py-2 rounded-full max-w-xs">
-                                Hiii, Can i Get my COR on 1st Semester.
+                                Hi, can i get my COR.
                             </div>
                         </div>
 
