@@ -60,7 +60,16 @@ export default {
     
     this.isLoading = true;
     
-    router.post('/login', this.form, {
+    let loginUrl = '/login';
+    try {
+        if (typeof this.route === 'function') {
+            loginUrl = this.route('login');
+        }
+    } catch (e) {
+        console.warn('Route "login" not found, using fallback');
+    }
+
+    router.post(loginUrl, this.form, {
         preserveState: true,
         preserveScroll: true,
         onSuccess: (page) => {
