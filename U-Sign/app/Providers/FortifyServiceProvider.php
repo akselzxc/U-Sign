@@ -39,8 +39,6 @@ class FortifyServiceProvider extends ServiceProvider
     }
     private function booteds(): void {
         Fortify::createUsersUsing(CreateNewUser::class);
-        Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
-        Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
 
         RateLimiter::for('login', function (Request $request) {

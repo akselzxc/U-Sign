@@ -1,3 +1,4 @@
+<!-- Fr_sidebar.vue -->
 <script setup>
 import { Link, router, usePage } from "@inertiajs/vue3";
 import { ref } from 'vue';
@@ -25,14 +26,17 @@ const handleLogoutClick = () => {
 
 const confirmLogout = () => {
     showLogoutConfirm.value = false;
-    showLogoutSuccess.value = true;
-
-    // Hide success message and redirect after 1.5 seconds
-    setTimeout(() => {
-        showLogoutSuccess.value = false;
-        // Perform server-side logout
-        router.post('/logout');
-    }, 1500);
+    
+    router.post('/logout', {}, {
+        onSuccess: () => {
+            // Force a full page reload to get fresh CSRF token
+            window.location.href = '/login_frontline';
+        },
+        onError: (errors) => {
+            console.error('Logout error:', errors);
+            alert('Failed to logout. Please try again.');
+        }
+    });
 };
 
 const cancelLogout = () => {

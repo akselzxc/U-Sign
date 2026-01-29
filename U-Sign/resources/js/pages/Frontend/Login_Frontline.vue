@@ -1,9 +1,9 @@
+<!-- Login_Frontline.vue -->
 <script>
-import { Link, router } from "@inertiajs/vue3";
+import { router } from "@inertiajs/vue3";
 
 export default {
     name: 'UsignLogin',
-    components: {Link},
     data() {
         return {
             form: {
@@ -17,7 +17,7 @@ export default {
             showPassword: false
         }
     },
-        mounted() {
+    mounted() {
         const interval = setInterval(() => {
             this.countdown--;
             if (this.countdown <= 0) {
@@ -25,70 +25,44 @@ export default {
                 clearInterval(interval);
             }
         }, 500);
-
-        // Ensure CSRF token is set
-        const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-        if (token) {
-            // Ensure defaults object exists before setting headers
-            if (!this.$inertia.defaults) {
-                this.$inertia.defaults = {};
-            }
-            this.$inertia.defaults.headers = {
-                ...this.$inertia.defaults.headers, // Preserve existing headers if any
-                'X-CSRF-TOKEN': token
-            };
-        }
-    }
-,
+    },
     methods: {
         togglePasswordVisibility() {
             this.showPassword = !this.showPassword;
         },
+        
         handleLogin() {
-    this.errorMessage = '';
+            this.errorMessage = '';
 
-    if (!this.form.email || !this.form.password) {
-        this.errorMessage = 'Please fill in all fields';
-        return;
-    }
+            if (!this.form.email || !this.form.password) {
+                this.errorMessage = 'Please fill in all fields';
+                return;
+            }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.form.email)) {
-        this.errorMessage = 'Please enter a valid email address';
-        return;
-    }
-    
-    this.isLoading = true;
-    
-    let loginUrl = '/login';
-    try {
-        if (typeof this.route === 'function') {
-            loginUrl = this.route('login');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(this.form.email)) {
+                this.errorMessage = 'Please enter a valid email address';
+                return;
+            }
+            
+            this.isLoading = true;
+
+            router.post('/login', this.form, {
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: () => {
+                    // Success - redirect handled by controller
+                },
+                onError: (errors) => {
+                    this.errorMessage = errors.email || errors.password || 'Invalid email or password';
+                },
+                onFinish: () => {
+                    this.isLoading = false;
+                }
+            });
         }
-    } catch (e) {
-        console.warn('Route "login" not found, using fallback');
-    }
-
-    router.post(loginUrl, this.form, {
-        preserveState: true,
-        preserveScroll: true,
-        onSuccess: (page) => {
-            console.log('Login successful!', page);
-            router.visit('/Fr_dashboard');
-        },
-        onError: (errors) => {
-            console.log('Login errors:', errors);
-            this.errorMessage = errors.email || errors.password || 'Invalid email or password';
-            this.isLoading = false;
-        },
-        onFinish: () => {
-            this.isLoading = false;
-        }
-    });
-}
     }
 }
-
 </script>
 
 <template>

@@ -10,30 +10,29 @@ use Illuminate\Validation\ValidationException;
 class LoginController extends Controller
 {
     public function login(Request $request)
-{
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required|string',
-    ]);
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
 
-    if (Auth::attempt($request->only('email', 'password'))) {
-        $request->session()->regenerate();
-        
-        // Return Inertia response instead of JSON
-        return redirect()->intended('/Fr_dashboard');
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            
+            return redirect()->intended('/Fr_dashboard');
+        }
+
+        throw ValidationException::withMessages([
+            'email' => 'The provided credentials are incorrect.',
+        ]);
     }
-
-    throw ValidationException::withMessages([
-        'email' => ['Invalid email or password.'],
-    ]);
-}
 
     public function logout(Request $request)
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+{
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
 
-        return redirect('/login');
-    }
+    return redirect('/login_frontline');
+}
 }
