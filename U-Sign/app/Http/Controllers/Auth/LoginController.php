@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
 
 class LoginController extends Controller
 {
@@ -19,7 +20,13 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             
-            return redirect()->intended('/Fr_dashboard');
+            $redirectTo = '/Fr_dashboard';
+
+            // If this was an Inertia (XHR) request, force a full page reload.
+            // This avoids CSRF/session race conditions when the session ID is regenerated.
+            return $request->header('X-Inertia')
+                ? Inertia::location($redirectTo)
+                : redirect()->intended($redirectTo);
         }
 
         throw ValidationException::withMessages([
@@ -33,6 +40,10 @@ class LoginController extends Controller
     $request->session()->invalidate();
     $request->session()->regenerateToken();
 
-    return redirect('/login_frontline');
+    $redirectTo = '/login_frontline';
+
+    return $request->header('X-Inertia')
+        ? Inertia::location($redirectTo)
+        : redirect($redirectTo);
 }
 }

@@ -193,7 +193,7 @@ export default {
 
                     <!-- Login Button -->
                     <button
-                        @click="handleLogin"
+                        type="submit"
                         :disabled="isLoading"
                         class="w-55 mx-auto block bg-gradient-to-r from-[#FF0202] to-[#990101] text-white py-3  rounded-lg font-bold text-lg
                         hover:bg-red-700 transition mt-8 disabled:opacity-50 disabled:cursor-not-allowed"

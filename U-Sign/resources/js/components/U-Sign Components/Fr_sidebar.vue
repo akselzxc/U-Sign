@@ -28,10 +28,6 @@ const confirmLogout = () => {
     showLogoutConfirm.value = false;
     
     router.post('/logout', {}, {
-        onSuccess: () => {
-            // Force a full page reload to get fresh CSRF token
-            window.location.href = '/login_frontline';
-        },
         onError: (errors) => {
             console.error('Logout error:', errors);
             alert('Failed to logout. Please try again.');
