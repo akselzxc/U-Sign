@@ -24,7 +24,14 @@ const quickReplies = [
     "Can I get your ID, please? Thank you.",
 ];
 
-const messages = ref<Message[]>([]);
+const messages = ref<Message[]>([
+    {
+        id: 'init-1',
+        sender: 'zoeey',
+        text: 'Can I Request COR?',
+        createdAt: Date.now(),
+    }
+]);
 
 const messageInput = ref('');
 const messagesEl = ref<HTMLElement | null>(null);
@@ -60,10 +67,11 @@ const pushMessage = async (sender: Sender, text: string) => {
 const maybeAutoReply = async (text: string) => {
     const normalized = text.trim().toLowerCase();
 
-    let reply = 'Got it. Please wait a moment while I check.';
-    if (normalized.includes('cor')) reply = 'Sure—please provide your student ID so I can verify.';
-    if (normalized.includes('thank')) reply = "You're welcome!";
-    if (normalized.includes('id')) reply = 'Thanks! One moment—checking your record now.';
+    let reply = 'Okay.';
+    if (normalized.includes('cor')) reply = 'Yes, I need a copy of my COR.';
+    if (normalized.includes('thank')) reply = 'You are welcome!';
+    if (normalized.includes('id')) reply = 'My ID number is 2023-1001.';
+    if (normalized.includes('wait') || normalized.includes('check')) reply = 'Okay, I will wait.';
 
     window.setTimeout(() => {
         void pushMessage('zoeey', reply);
@@ -97,7 +105,7 @@ const toggleRecording = () => {
     // Dummy recording: after a short delay, stop and insert a fake transcript.
     recordingTimeout = window.setTimeout(() => {
         isRecording.value = false;
-        messageInput.value = "Can you help me with my COR request?";
+        messageInput.value = "Hello, how can I help you today?";
     }, 1800);
 };
 
