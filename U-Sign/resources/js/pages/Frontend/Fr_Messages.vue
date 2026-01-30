@@ -21,7 +21,7 @@ const quickReplies = [
     'Okay!',
     'Thank you',
     "I'll check that",
-    "Can I get your ID, please? Thank you.",
+    "Can I get your ID, please?",
 ];
 
 const messages = ref<Message[]>([
